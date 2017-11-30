@@ -4,7 +4,8 @@
 
 const { MODE } = require("./reps/constants");
 const { REPS, getRep } = require("./reps/rep");
-const ObjectInspector = require("./object-inspector/");
+const ObjectInspector = require("./object-inspector/ObjectInspectorCreator");
+const ObjectInspectorsHandler = require("./object-inspector/ObjectInspectorsHandler");
 const ObjectInspectorUtils = require("./object-inspector/utils/node");
 
 const {
@@ -23,5 +24,6 @@ module.exports = {
   parseURLParams,
   getGripPreviewItems,
   ObjectInspector,
+  ObjectInspectorsHandler,
   ObjectInspectorUtils,
 };
