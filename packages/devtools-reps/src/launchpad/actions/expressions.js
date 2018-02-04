@@ -16,6 +16,20 @@ function evaluateInput(input) {
   };
 }
 
+function getLongStringFullText(grip) {
+  return async function ({dispatch, client}) {
+    let fullText;
+
+    try {
+      fullText = await client.clientCommands.getLongStringFullText(grip);
+    } catch (err) {
+      console.warn("Error when fetching fullText of grip", err);
+    }
+
+    return fullText;
+  };
+}
+
 function addExpression(input, packet) {
   return {
     key: generateKey(),
@@ -65,5 +79,6 @@ module.exports = {
   showResultPacket,
   hideResultPacket,
   createObjectClient,
+  getLongStringFullText,
   releaseActor,
 };
