@@ -27,7 +27,11 @@ function onConnect(connection) {
           input,
           result => resolve(result)
         );
-      })
+      }),
+
+      getLongStringFullText: stringGrip => (
+        connection.tabConnection.tabTarget.activeConsole.getString(stringGrip)
+      )
     },
 
     getObjectClient: function (grip) {
