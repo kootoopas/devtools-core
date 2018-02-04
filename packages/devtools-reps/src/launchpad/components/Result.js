@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+import {connect} from "react-redux";
+
 const React = require("react");
 const { Component, createFactory } = React;
 const PropTypes = require("prop-types");
@@ -9,6 +11,8 @@ const dom = require("react-dom-factories");
 const { MODE } = require("../../reps/constants");
 const ObjectInspector = createFactory(require("../../index").ObjectInspector);
 const { Rep } = require("../../reps/rep");
+const { bindActionCreators } = require("redux");
+import { getLongStringFullText } from "../actions";
 
 class Result extends Component {
   static get propTypes() {
@@ -18,6 +22,7 @@ class Result extends Component {
       hideResultPacket: PropTypes.func.isRequired,
       createObjectClient: PropTypes.func.isRequired,
       releaseActor: PropTypes.func.isRequired,
+      getLongStringFullText: PropTypes.func.isRequired,
     };
   }
 
@@ -60,6 +65,7 @@ class Result extends Component {
     const {
       createObjectClient,
       releaseActor,
+      getLongStringFullText,
     } = this.props;
     const path = object.actor;
 
@@ -79,6 +85,7 @@ class Result extends Component {
         autoExpandDepth: 0,
         createObjectClient,
         releaseActor,
+        getLongStringFullText,
         mode: MODE[modeKey],
         onInspectIconClick: nodeFront => console.log("inspectIcon click", nodeFront),
         onViewSourceInDebugger: location =>
@@ -121,5 +128,8 @@ class Result extends Component {
     );
   }
 }
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ getLongStringFullText }, dispatch);
+}
 
-module.exports = Result;
+module.exports = connect(null, mapDispatchToProps)(Result);
