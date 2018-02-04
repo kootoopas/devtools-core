@@ -22,7 +22,7 @@ class Result extends Component {
       hideResultPacket: PropTypes.func.isRequired,
       createObjectClient: PropTypes.func.isRequired,
       releaseActor: PropTypes.func.isRequired,
-      getLongStringFullText: PropTypes.func.isRequired,
+      getLongStringFullText: PropTypes.func,
     };
   }
 
