@@ -2,6 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
+const { getLongStringFullText } = require("../../launchpad/actions/expressions");
+
 const {
   enumEntries,
   enumIndexedProperties,
@@ -24,6 +26,7 @@ const {
   nodeIsPrimitive,
   nodeIsProxy,
   nodeNeedsNumericalBuckets,
+  nodeIsLongString,
 } = require("./node");
 
 import type {
@@ -74,6 +77,10 @@ function loadItemProperties(
 
   if (shouldLoadItemSymbols(item, loadedProperties)) {
     loadingPromises.push(enumSymbols(getObjectClient(), start, end));
+  }
+
+  if (shouldLoadFullTextProperty(item, loadedProperties)) {
+    loadingPromises.push(getLongStringFullText(getValue(item)));
   }
 
   if (loadingPromises.length === 0) {
@@ -177,6 +184,13 @@ function shouldLoadItemSymbols(
     && !nodeHasAccessors(item)
     && !nodeIsPrimitive(item)
     && !nodeIsProxy(item);
+}
+
+function shouldLoadFullTextProperty(
+  item: Node,
+  loadedProperties: LoadedProperties = new Map()
+): boolean {
+  return !loadedProperties.has(item.path) && nodeIsLongString(item);
 }
 
 module.exports = {
