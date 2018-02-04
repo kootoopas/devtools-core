@@ -3,11 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 // @flow
+
 const { Component, createFactory } = require("react");
 const PropTypes = require("prop-types");
 const dom = require("react-dom-factories");
 import Components from "devtools-components";
 const Tree = createFactory(Components.Tree);
+import CutoffComponent from "../shared/Cutoff";
+const Cutoff = createFactory(CutoffComponent);
 require("./index.css");
 
 const classnames = require("classnames");
@@ -45,6 +48,7 @@ const {
   nodeIsUnmappedBinding,
   nodeIsUnscopedBinding,
   nodeIsWindow,
+  nodeIsLongString,
 } = Utils.node;
 
 const {
@@ -157,6 +161,7 @@ class ObjectInspector extends Component {
     self.setExpanded = this.setExpanded.bind(this);
     self.focusItem = this.focusItem.bind(this);
     self.getRoots = this.getRoots.bind(this);
+    self.renderCutoff = this.renderCutoff.bind(this);
   }
 
   state: State;
@@ -223,13 +228,11 @@ class ObjectInspector extends Component {
    * with the results it gets from those functions.
    */
   async setExpanded(item: Node, expand: boolean) {
-    if (nodeIsPrimitive(item)) {
+    if (nodeIsPrimitive(item) && !nodeIsLongString(item)) {
       return;
     }
 
-    const {
-      loadedProperties,
-    } = this.state;
+    const { loadedProperties } = this.state;
 
     const key = this.getKey(item);
 
@@ -429,6 +432,29 @@ class ObjectInspector extends Component {
     );
   }
 
+  renderCutoff(item: Node, repProps) {
+    const {
+      expandedPaths,
+      loadedProperties,
+      focusedItem,
+      loading,
+    } = this.state;
+
+    const key = this.getKey(item);
+
+    return Cutoff({
+      repProps,
+      loading: loading.has(key),
+      fullValue: loadedProperties.get(key),
+      expanded: expandedPaths.has(key),
+      expandable: nodeIsLongString(item),
+      focused: focusedItem,
+      onExpand: () => this.setExpanded(item, true),
+      onCollapse: () => this.setExpanded(item, false),
+      onFocus: () => this.focusItem(item),
+    });
+  }
+
   getDefaultPropsByRep(object) {
     if (StringRep.supportsObject(object)) {
       return {
@@ -444,13 +470,18 @@ class ObjectInspector extends Component {
     props: Props
   ) {
     const object = getValue(item);
-    const repDefaults = this.getDefaultPropsByRep(object);
-
-    return Rep(Object.assign({}, repDefaults, props, {
+    const defaults = this.getDefaultPropsByRep(object);
+    props = Object.assign({}, defaults, props, {
       object,
       mode: props.mode || MODE.TINY,
       defaultRep: Grip,
-    }));
+    });
+
+    if (nodeIsLongString(item)) {
+      return this.renderCutoff(item, props);
+    }
+
+    return Rep(props);
   }
 
   render() {
@@ -521,6 +552,7 @@ ObjectInspector.propTypes = {
   onFocus: PropTypes.func,
   onDoubleClick: PropTypes.func,
   onLabelClick: PropTypes.func,
+  getLongStringFullText: PropTypes.func.isRequired,
 };
 
 module.exports = ObjectInspector;

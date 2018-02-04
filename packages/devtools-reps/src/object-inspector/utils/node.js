@@ -9,6 +9,7 @@ const ArrayRep = require("../../reps/array");
 const GripArrayRep = require("../../reps/grip-array");
 const GripMap = require("../../reps/grip-map");
 const GripMapEntryRep = require("../../reps/grip-map-entry");
+const { isLongString } = require("../../reps/string");
 
 const MAX_NUMERICAL_PROPERTIES = 100;
 
@@ -252,6 +253,10 @@ function nodeHasAllEntriesInPreview(item : Node) : boolean {
 function nodeNeedsNumericalBuckets(item : Node) : boolean {
   return nodeSupportsNumericalBucketing(item)
     && getNumericalPropertiesCount(item) > MAX_NUMERICAL_PROPERTIES;
+}
+
+function nodeIsLongString(item : Node) : boolean {
+  return isLongString(getValue(item));
 }
 
 function makeNodesForPromiseProperties(
@@ -818,6 +823,7 @@ module.exports = {
   nodeIsUnmappedBinding,
   nodeIsUnscopedBinding,
   nodeIsWindow,
+  nodeIsLongString,
   nodeNeedsNumericalBuckets,
   nodeSupportsNumericalBucketing,
   setNodeChildren,
