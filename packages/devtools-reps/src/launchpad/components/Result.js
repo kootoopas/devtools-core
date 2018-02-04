@@ -12,7 +12,7 @@ const { MODE } = require("../../reps/constants");
 const ObjectInspector = createFactory(require("../../index").ObjectInspector);
 const { Rep } = require("../../reps/rep");
 const { bindActionCreators } = require("redux");
-import { getLongStringFullText } from "../actions";
+import actions from "../actions";
 
 class Result extends Component {
   static get propTypes() {
@@ -128,8 +128,11 @@ class Result extends Component {
     );
   }
 }
+
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getLongStringFullText }, dispatch);
+  return bindActionCreators({
+    getLongStringFullText: actions.getLongStringFullText
+  }, dispatch);
 }
 
 module.exports = connect(null, mapDispatchToProps)(Result);
