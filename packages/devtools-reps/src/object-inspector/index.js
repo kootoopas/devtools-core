@@ -552,7 +552,7 @@ ObjectInspector.propTypes = {
   onFocus: PropTypes.func,
   onDoubleClick: PropTypes.func,
   onLabelClick: PropTypes.func,
-  getLongStringFullText: PropTypes.func.isRequired,
+  getLongStringFullText: PropTypes.func,
 };
 
 module.exports = ObjectInspector;
