@@ -21,12 +21,12 @@ SymbolRep.propTypes = {
 };
 
 function SymbolRep(props) {
-  let {
+  const {
     className = "objectBox objectBox-symbol",
     object,
   } = props;
-  let {name} = object;
-
+  const {name} = object;
+  console.log(name);
   return span({
     className,
     "data-link-actor-id": object.actor,

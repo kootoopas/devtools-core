@@ -14,4 +14,19 @@ stubs.set("SymbolWithoutIdentifier", {
   actor: "server1.conn1.child1/symbol2",
 });
 
+const fullText = "blah".repeat(10000);
+const initialText = fullText.substring(0, 10000);
+
+stubs.set("SymbolWithLongStringIdentifier", {
+  type: "symbol",
+  actor: "server1.conn1.child1/symbol2",
+  name: {
+    "type": "longString",
+    "initial": initialText,
+    "fullText": fullText,
+    "length": fullText.length,
+    "actor": "server1.conn1.child1/longString58"
+  }
+});
+
 module.exports = stubs;

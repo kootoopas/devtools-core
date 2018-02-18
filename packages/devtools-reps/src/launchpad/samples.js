@@ -135,6 +135,7 @@ let samples = {
   ],
 
   symbol: [
+    "Symbol('blah'.repeat(10000))",
     "Symbol('foo')",
     "Symbol()"
   ]

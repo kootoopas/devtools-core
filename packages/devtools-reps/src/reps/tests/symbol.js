@@ -9,14 +9,23 @@ const stubs = require("../stubs/symbol");
 const { expectActorAttribute } = require("./test-helpers");
 
 describe("test Symbol", () => {
-  const stub = stubs.get("Symbol");
-
   it("renders with the expected content", () => {
+    const stub = stubs.get("Symbol");
     const renderedComponent = shallow(Rep({
       object: stub
     }));
 
     expect(renderedComponent.text()).toEqual("Symbol(foo)");
+    expectActorAttribute(renderedComponent, stub.actor);
+  });
+
+  it("renders with longString identifier", () => {
+    const stub = stubs.get("SymbolWithLongStringIdentifier");
+    const renderedComponent = shallow(Rep({
+      object: stub
+    }));
+
+    expect(renderedComponent.text()).toEqual(`Symbol(${stub.name.initial})`);
     expectActorAttribute(renderedComponent, stub.actor);
   });
 });
