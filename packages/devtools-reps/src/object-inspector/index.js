@@ -232,6 +232,7 @@ class ObjectInspector extends Component {
     }
 
     const { loadedProperties } = this.state;
+    const { getLongStringFullText } = this.props;
 
     const key = this.getKey(item);
 
@@ -253,7 +254,13 @@ class ObjectInspector extends Component {
       const path = item.path;
 
       const onItemPropertiesLoaded = loadItemProperties(
-        item, this.props.createObjectClient, loadedProperties);
+        item,
+        this.props.createObjectClient,
+        loadedProperties,
+        nodeIsLongString(item)
+          ? getLongStringFullText
+          : undefined
+      );
       if (onItemPropertiesLoaded !== null) {
         this.setState((prevState, props) => {
           const nextLoading = new Map(prevState.loading);
@@ -431,7 +438,10 @@ class ObjectInspector extends Component {
     );
   }
 
-  renderCutoff(item: Node, repProps) {
+  renderCutoff(
+    item: Node,
+    repProps: Object
+  ) {
     const {
       expandedPaths,
       loadedProperties,
@@ -444,7 +454,7 @@ class ObjectInspector extends Component {
     return Cutoff({
       repProps,
       loading: loading.has(key),
-      fullValue: loadedProperties.get(key),
+      loadedProperties: loadedProperties.get(key),
       expanded: expandedPaths.has(key),
       expandable: nodeIsLongString(item),
       focused: focusedItem,
@@ -458,17 +468,16 @@ class ObjectInspector extends Component {
     item: Node,
     props: Props
   ) {
-    const object = getValue(item);
-
-    if (nodeIsLongString(item)) {
-      return this.renderCutoff(item, props);
-    }
-
-    return Rep(Object.assign({}, props, {
-      object,
+    props = Object.assign({}, props, {
+      object: getValue(item),
       mode: props.mode || MODE.TINY,
       defaultRep: Grip,
     });
+    console.log(this.state.loadedProperties);
+
+    return nodeIsLongString(item)
+      ? this.renderCutoff(item, props)
+      : Rep(props);
   }
 
   render() {

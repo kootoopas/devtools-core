@@ -2,8 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-const { getLongStringFullText } = require("../../launchpad/actions/expressions");
-
 const {
   enumEntries,
   enumIndexedProperties,
@@ -41,8 +39,13 @@ import type {
 function loadItemProperties(
   item: Node,
   createObjectClient: (RdpGrip | NodeContents) => ObjectClient,
-  loadedProperties: LoadedProperties
+  loadedProperties: LoadedProperties,
+  getLongStringFullText?: (RdpGrip | NodeContents) => Promise<GripProperties>
 ) : Promise<GripProperties> | null {
+  if (shouldLoadFullTextProperty(item, loadedProperties)) {
+    return getLongStringFullText(getValue(item));
+  }
+
   const [start, end] = item.meta
     ? [item.meta.startIndex, item.meta.endIndex]
     : [];
@@ -77,10 +80,6 @@ function loadItemProperties(
 
   if (shouldLoadItemSymbols(item, loadedProperties)) {
     loadingPromises.push(enumSymbols(getObjectClient(), start, end));
-  }
-
-  if (shouldLoadFullTextProperty(item, loadedProperties)) {
-    loadingPromises.push(getLongStringFullText(getValue(item)));
   }
 
   if (loadingPromises.length === 0) {

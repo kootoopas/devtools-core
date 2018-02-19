@@ -23,10 +23,10 @@ function getLongStringFullText(grip) {
     try {
       fullText = await client.clientCommands.getLongStringFullText(grip);
     } catch (err) {
-      console.warn("Error when fetching fullText of grip", err);
+      console.warn("Error while fetching fullText of grip", err);
     }
 
-    return fullText;
+    return { fullText };
   };
 }
 

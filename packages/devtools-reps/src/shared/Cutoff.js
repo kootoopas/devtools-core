@@ -4,6 +4,7 @@
 
 // @flow
 import { Component } from "react";
+import type {LoadedProperties} from "../object-inspector/types";
 const dom = require("react-dom-factories");
 const { span } = dom;
 const {
@@ -20,7 +21,7 @@ type Props = {
   onExpand?: () => void,
   onCollapse?: () => void,
   onFocus?: () => void,
-  fullValue?: any,
+  loadedProperties?: LoadedProperties,
 };
 
 class Cutoff extends Component {
@@ -35,26 +36,29 @@ class Cutoff extends Component {
       onExpand,
       onCollapse,
       repProps,
-      fullValue,
     } = this.props;
-
-    if (expanded) {
-      repProps.member = {
-        open: true
-      };
-      repProps.object.fullText = fullValue;
-    } else {
-      delete repProps.object.fullText;
-      delete repProps.member;
-    }
 
     const onClick = expandable
       ? () => expanded ? onCollapse() : onExpand()
       : undefined;
 
+    let fullText;
+    let member;
+    if (expanded) {
+      member = {
+        open: true
+      };
+      fullText = this.props.loadedProperties.fullText;
+    }
+
+    const props = Object.assign({}, repProps, {
+      member,
+      object: Object.assign({}, repProps.object, { fullText })
+    });
+
     return span({
       onClick,
-    }, Rep(repProps));
+    }, Rep(props));
   }
 }
 
